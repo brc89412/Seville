@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0A1330">
+<title>Sevilla, 28 to 30 September 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Young+Serif&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{
+  --night:#0A1330; --deep:#0E1B42; --panel:#132250; --panel2:#1A2D62; --line:#28407F;
+  --cobalt:#4A7DE0; --cobalt-soft:#93B3F8; --albero:#E4AA3C; --almagre:#D6573E; --coral:#F28B74;
+  --cal:#F4EFE3; --dim:#B4BFDD; --ok:#86C28A; --tile-ink:#123A8C; --rose:#F0A6C0;
+  --serif:'Young Serif',Georgia,'Times New Roman',serif;
+  --sans:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#050B1F}
+body{font-family:var(--sans);color:var(--cal);-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.45}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--albero);outline-offset:2px;border-radius:6px}
+
+#app{position:relative;max-width:480px;height:100dvh;margin:0 auto;background:var(--night);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 0 1px #16264f,0 30px 80px #000a}
+main{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+main::-webkit-scrollbar{display:none}
+.screen{padding:0 18px 28px;animation:fade .22s ease-out}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+/* tab bar */
+nav{display:flex;background:rgba(10,19,48,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 4px calc(6px + env(safe-area-inset-bottom))}
+nav button{flex:1;background:none;border:0;color:var(--dim);display:flex;flex-direction:column;align-items:center;gap:3px;font-weight:600;font-size:11px;padding:6px 0 2px;position:relative}
+nav button svg.ic{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button[aria-current=page]{color:var(--albero)}
+nav .tabstar{position:absolute;top:-9px;left:50%;width:14px;height:14px;transform:translateX(-50%);fill:var(--albero)}
+
+/* type */
+h1,h2,h3{font-family:var(--serif);font-weight:400;margin:0}
+h2{font-size:24px;line-height:1.15;margin:26px 0 10px}
+h3{font-size:18px;line-height:1.25}
+.sub{color:var(--dim);font-size:13.5px}
+.tnum{font-variant-numeric:tabular-nums}
+p{margin:0 0 10px}
+
+/* splash */
+#splash{position:absolute;inset:0;z-index:50;background:radial-gradient(120% 80% at 50% 0%,#17306e 0%,var(--night) 60%);display:flex;flex-direction:column;justify-content:center;padding:28px;transition:opacity .5s,transform .5s}
+#splash::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:var(--tile);background-size:64px 64px;opacity:0;animation:tiles 1.6s .1s ease-out forwards;mask-image:radial-gradient(circle at 50% 42%,#000 10%,transparent 72%);-webkit-mask-image:radial-gradient(circle at 50% 42%,#000 10%,transparent 72%)}
+@keyframes tiles{to{opacity:.55}}
+#splash.out{opacity:0;transform:scale(1.03);pointer-events:none}
+.plaque{position:relative;background:var(--cal);color:var(--tile-ink);border-radius:14px;padding:26px 22px 20px;text-align:center;box-shadow:0 0 0 3px var(--cal),0 0 0 5px var(--tile-ink),0 22px 50px #0009}
+.plaque::before{content:"";position:absolute;inset:8px;border:1.5px solid var(--tile-ink);border-radius:8px;pointer-events:none}
+.plaque h1{font-size:60px;line-height:1;letter-spacing:.01em}
+.plaque .ln{font-size:14px;font-weight:600;margin-top:8px}
+.plaque .ln2{font-size:13px;opacity:.8;margin-top:2px}
+.cta{position:relative;display:block;width:100%;margin-top:26px;border:0;border-radius:999px;padding:15px;font-family:var(--serif);font-size:18px;background:var(--albero);color:#22160A}
+.cta:active{transform:scale(.98)}
+.fine{position:relative;text-align:center;color:var(--dim);font-size:12.5px;margin-top:14px}
+
+/* home hero */
+.hero{padding-top:calc(18px + env(safe-area-inset-top))}
+.hero .plaque{margin:6px 4px 0}
+.hero .plaque h1{font-size:52px}
+.hero-tiles{height:16px;margin:0 auto;width:calc(100% - 30px);background-image:var(--tile);background-size:34px 34px;opacity:.5;mask-image:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent)}
+
+/* lanes */
+.lanes{display:grid;gap:10px;margin-top:6px}
+.lane{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 15px;position:relative;overflow:hidden}
+.lane::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c)}
+.lane .who{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;color:var(--c)}
+.lane .who .dot{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.lane h3{margin-top:6px}
+.lane .meta{color:var(--dim);font-size:13px;margin-top:2px}
+.bar{height:5px;background:#0A1330;border-radius:5px;margin:12px 0 8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--c);border-radius:5px}
+.next{font-size:13px;color:var(--dim)}
+.next b{color:var(--cal);font-weight:600}
+.t-together{--c:var(--albero)} .t-work{--c:var(--cobalt-soft)} .t-explore{--c:var(--coral)}
+.count{display:flex;gap:10px;margin-top:10px}
+.count div{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:14px;text-align:center;padding:12px 4px}
+.count b{display:block;font:400 30px/1 var(--serif);color:var(--albero)}
+.count span{font-size:12px;color:var(--dim)}
+
+/* day tiles */
+.days{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.dtile{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:11px 10px;text-align:left;position:relative}
+.dtile b{display:block;font:400 18px/1.1 var(--serif)}
+.dtile span{display:block;color:var(--dim);font-size:12px;margin-top:4px;line-height:1.3}
+.dtile[aria-pressed=true]{background:var(--cal);color:var(--tile-ink);border-color:var(--cal)}
+.dtile[aria-pressed=true] span{color:#2c4f9c}
+
+/* sticky bars */
+.sticky{position:sticky;top:0;z-index:5;background:linear-gradient(var(--night) 82%,transparent);padding:calc(14px + env(safe-area-inset-top)) 0 12px;margin:0 -18px;padding-left:18px;padding-right:18px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--deep);color:var(--dim);padding:7px 13px;border-radius:999px;font-weight:600;font-size:13px}
+.chip[aria-pressed=true]{background:var(--cal);color:var(--tile-ink);border-color:var(--cal)}
+.chip .d{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);margin-right:7px}
+.dayline{display:flex;gap:14px;flex-wrap:wrap;color:var(--dim);font-size:12.5px;margin:12px 0 6px}
+.dayline b{color:var(--cal);font-weight:600}
+
+/* timeline */
+.blk{display:grid;grid-template-columns:46px 14px 1fr;column-gap:10px}
+.time{text-align:right;padding-top:14px;font-variant-numeric:tabular-nums;line-height:1.2}
+.time b{display:block;font-size:14.5px}
+.time span{color:var(--dim);font-size:12px}
+.rail{position:relative}
+.rail::before{content:"";position:absolute;left:6px;top:0;bottom:0;width:2px;background:var(--line)}
+.rail i{position:absolute;left:0;top:18px;width:14px;height:14px;border-radius:50%;background:var(--c);box-shadow:0 0 0 4px var(--night)}
+.blk.done .rail i{background:var(--night);border:2px solid var(--c)}
+.card{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:6px 0 8px}
+.blk.done .card{opacity:.55}
+.card .head{display:block;width:100%;text-align:left;background:none;border:0;padding:0;color:inherit}
+.card .head span{display:block}
+.card .lbl{font-size:12px;font-weight:700;color:var(--c)}
+.card .ttl{font:400 17px/1.25 var(--serif);margin-top:2px}
+.card .place{color:var(--dim);font-size:13px;margin-top:2px}
+.card .teaser{margin-top:8px;font-size:14px;color:#dbe3f6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card.open .teaser{display:block;-webkit-line-clamp:unset}
+.more{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease}
+.card.open .more{grid-template-rows:1fr}
+.more>div{overflow:hidden}
+.opts{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+.opts li{background:var(--deep);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:13.5px}
+.opts li b{color:var(--cal)}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.tag{font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--deep);border:1px solid var(--line);color:var(--dim)}
+.tag.book{background:rgba(214,87,62,.18);border-color:var(--almagre);color:var(--coral)}
+.tag.gem{background:rgba(228,170,60,.16);border-color:var(--albero);color:var(--albero)}
+.acts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--deep);color:var(--cal);border-radius:10px;padding:8px 12px;font-weight:600;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.pri{background:var(--albero);color:#22160A;border-color:var(--albero)}
+.btn:active{transform:scale(.97)}
+.empty{color:var(--dim);text-align:center;padding:26px 0}
+
+/* generic cards / lists */
+.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 15px;margin-bottom:10px}
+.box h3{margin-bottom:4px}
+.box.gold{border-color:var(--albero)}
+.row{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.row .k{flex:none;min-width:98px;white-space:nowrap;font-weight:700;font-variant-numeric:tabular-nums;color:var(--albero);font-size:13.5px}
+.check{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:12px 0}
+.check:first-of-type{border-top:0}
+.check .bx{flex:none;width:22px;height:22px;border-radius:7px;border:2px solid var(--cobalt);display:grid;place-items:center;margin-top:1px}
+.check[aria-checked=true] .bx{background:var(--ok);border-color:var(--ok)}
+.check[aria-checked=true] .bx::after{content:"";width:6px;height:11px;border:solid #0A1330;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.check[aria-checked=true] span.tx{opacity:.6;text-decoration:line-through}
+.check small{display:block;color:var(--dim)}
+details.acc{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:8px}
+details.acc summary{list-style:none;cursor:pointer;padding:13px 15px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary::after{content:"+";font-size:20px;color:var(--albero);transition:transform .2s}
+details.acc[open] summary::after{transform:rotate(45deg)}
+details.acc .in{padding:0 15px 13px;color:#dbe3f6;font-size:14px}
+details.acc .in li{margin-bottom:6px}
+details.acc ul{padding-left:18px;margin:0}
+
+/* eat */
+.seg{display:flex;background:var(--deep);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{flex:1;border:0;background:none;color:var(--dim);font-weight:600;padding:9px 4px;border-radius:9px;font-size:13.5px}
+.seg button[aria-pressed=true]{background:var(--cal);color:var(--tile-ink)}
+.dish{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 15px;margin-bottom:10px}
+.dish h3{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.dish h3 small{font:600 12px var(--sans);color:var(--coral);white-space:nowrap}
+.dish p{color:#dbe3f6;font-size:14px;margin:6px 0 0}
+.dish .ask{margin-top:8px;font-size:13px;color:var(--albero)}
+.wk{display:flex;gap:6px;margin-top:10px}
+.wk span{font-size:12px;font-weight:700;padding:3px 9px;border-radius:8px;background:rgba(134,194,138,.16);color:var(--ok);border:1px solid rgba(134,194,138,.4)}
+.wk span.no{background:rgba(214,87,62,.14);color:var(--coral);border-color:rgba(214,87,62,.5);text-decoration:line-through}
+.hrs{font-size:12.5px;color:var(--dim);margin-top:8px}
+
+/* map */
+#map{height:min(46dvh,420px);border-radius:16px;border:1px solid var(--line);overflow:hidden;background:var(--deep)}
+.leaflet-container{font-family:var(--sans);background:var(--deep)}
+.pin{width:18px;height:18px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--c);border:2px solid var(--night);box-shadow:0 2px 6px #0009}
+.pin.on{width:24px;height:24px}
+.leaflet-popup-content-wrapper{background:var(--panel);color:var(--cal);border-radius:12px;border:1px solid var(--line)}
+.leaflet-popup-tip{background:var(--panel)}
+.leaflet-popup-content{margin:12px 14px;font-size:13px;line-height:1.4}
+.leaflet-popup-content b{font-family:var(--serif);font-weight:400;font-size:16px;display:block;margin-bottom:2px}
+.leaflet-popup-content a{color:var(--albero);font-weight:600}
+.cat-sight{--c:var(--albero)} .cat-eat{--c:var(--almagre)} .cat-culture{--c:var(--cobalt-soft)} .cat-sweet{--c:var(--rose)} .cat-base{--c:var(--ok)}
+.plist button.item{display:flex;width:100%;text-align:left;align-items:center;gap:12px;background:none;border:0;border-top:1px solid var(--line);padding:11px 0}
+.plist .sw{flex:none;width:12px;height:12px;border-radius:50%;background:var(--c)}
+.plist small{display:block;color:var(--dim)}
+.offline{background:var(--deep);border:1px dashed var(--line);border-radius:16px;padding:10px}
+.offline svg{width:100%;height:auto;display:block}
+.offline text{font:600 9px var(--sans);fill:var(--dim)}
+
+/* toast */
+#toast{position:absolute;left:50%;bottom:86px;transform:translate(-50%,20px);background:var(--cal);color:var(--tile-ink);padding:10px 16px;border-radius:999px;font-weight:600;font-size:13.5px;opacity:0;pointer-events:none;transition:.25s;z-index:60;white-space:nowrap}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+select,input[type=time]{background:var(--deep);border:1px solid var(--line);color:var(--cal);border-radius:10px;padding:9px 10px;font:inherit}
+.msg{background:var(--deep);border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:13.5px;color:#dbe3f6;margin:8px 0}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}#splash::before{opacity:.55}}
+@media (min-width:700px){#app{margin:14px auto;height:calc(100dvh - 28px);border-radius:28px}}
+
+</style>
+</head>
+<body>
+<div id="app">
+  <main id="main"></main>
+  <nav id="nav" aria-label="Sections"></nav>
+  <div id="splash">
+    <div class="plaque">
+      <h1>Sevilla</h1>
+      <div class="ln">28 to 30 September 2026</div>
+      <div class="ln2">Two travellers, one flight home at 22:00</div>
+    </div>
+    <button class="cta" id="enter">Open the guide</button>
+    <div class="fine">Follows Madrid time. Tap any card for detail.</div>
+  </div>
+  <div id="toast" role="status" aria-live="polite"></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* ---------- Trip data (hours checked on Google Maps, 28 Sep 2026) ---------- */
+const DAYS = [
+  {name:'Monday', short:'Mon 28', theme:'Landings and first tapas', line:'Two arrivals, one work day, a floodlit night.'},
+  {name:'Tuesday', short:'Tue 29', theme:'The big day', line:'Alcázar, Cathedral, flamenco and a very late night.'},
+  {name:'Wednesday', short:'Wed 30', theme:'Triana and last bites', line:'Tiles, market, a local lunch, then the 22:00 flight.'}
+];
+const SUN = ['08:16','20:12'];
+
+const TRACKS = {
+  together:{label:'Together', cls:'t-together'},
+  work:{label:'Working', cls:'t-work'},
+  explore:{label:'Exploring', cls:'t-explore'}
+};
+
+const CATS = {
+  sight:'Sights', eat:'Eat and drink', culture:'Flamenco and art', sweet:'Sweets and shops', base:'Base and work'
+};
+
+/* key, name, cat, lat, lng, place_id, blurb, hours */
+const PINS = [
+  {k:'base', n:'Plaza del Salvador (your base area)', c:'base', la:37.38999, ln:-5.99284, b:'Minarete del Salvador sits between here and Alfalfa.', h:''},
+  {k:'late', n:'LATE. Specialty Coffee & co working', c:'base', la:37.39614, ln:-5.99414, id:'ChIJM7YsquZtEg0RoEr9g59svFg', b:'Small co-working cafe with reported WiFi. Calle Amor de Dios 36.', h:'Mon 08:30–18:30, Tue–Wed 08:30–17:30'},
+  {k:'syra', n:'Syra Coffee', c:'base', la:37.38894, ln:-5.99331, id:'ChIJEWLhqdttEg0RpLD4sByPpg8', b:'Great coffee, tiny, close to the flat. Better for a coffee than a work session.', h:'Mon–Fri 08:00–20:00'},
+  {k:'hispalis', n:'Hispalis Café', c:'base', la:37.39358, ln:-5.99478, id:'ChIJP20czzNtEg0RZZbZI7N_2I0', b:'Roastery on Calle Amor de Dios 1. Can queue.', h:'Daily 08:30–15:00'},
+  {k:'alcazar', n:'Real Alcázar', c:'sight', la:37.38305, ln:-5.99023, id:'ChIJS6JBjBlsEg0Rh_7Brr92qbo', b:'Mudéjar palace and gardens. Book a timed slot.', h:'Daily 09:30–19:00'},
+  {k:'cathedral', n:'Cathedral and Giralda', c:'sight', la:37.38618, ln:-5.99261, id:'ChIJK9S3HhpsEg0RR3Jr5EfWT50', b:'Ticket also covers the Iglesia del Salvador.', h:'Mon–Sat about 10:45–19:00, last entry about 18:00'},
+  {k:'salvador', n:'Iglesia del Divino Salvador', c:'sight', la:37.38999, ln:-5.99284, id:'ChIJa8bQvBpsEg0RuSzRTLicWAs', b:'Gilded Baroque altarpieces on your doorstep, built over the old main mosque.', h:'Included in the Cathedral ticket'},
+  {k:'setas', n:'Setas de Sevilla (Metropol Parasol)', c:'sight', la:37.39298, ln:-5.99216, id:'ChIJH1SaEAVsEg0RxNL-4W2upL0', b:'Wooden rooftop walk, best around sunset.', h:'Daily 09:30–23:45'},
+  {k:'torre', n:'Torre del Oro', c:'sight', la:37.38236, ln:-5.99639, b:'Riverside tower on the Guadalquivir.', h:'Exterior always open'},
+  {k:'plaza', n:'Plaza de España and Parque de María Luisa', c:'sight', la:37.37418, ln:-5.98722, id:'ChIJ7zUaHSRsEg0RQugeffDytmg', b:'Brick and tile semicircle with provincial alcoves. Golden hour is the moment.', h:'Sunset about 20:12'},
+  {k:'pilatos', n:'Casa de Pilatos', c:'culture', la:37.38999, ln:-5.98721, id:'ChIJNbFm6xxsEg0Rq59iZILsBgo', b:'Tiled courtyards and Roman statues, far quieter than the Alcázar.', h:'Daily 09:00–18:00'},
+  {k:'bellas', n:'Museo de Bellas Artes', c:'culture', la:37.39251, ln:-6.00003, id:'ChIJp_IY2w1sEg0RNLww11Nc7LM', b:'Murillo, Zurbarán and Valdés Leal in a former convent. €1.50 cash for non-EU visitors.', h:'Tue–Sat 09:00–21:00, closed Mon'},
+  {k:'sanluis', n:'Iglesia de San Luis de los Franceses', c:'culture', la:37.39841, ln:-5.98811, id:'ChIJnyEZNAFsEg0RYuZ5iJqoSvM', b:'Jesuit Baroque church, quiet and rarely crowded.', h:'Tue–Sun 10:00–14:00 and 16:00–20:00'},
+  {k:'casaflamenco', n:'La Casa del Flamenco', c:'culture', la:37.38630, ln:-5.98859, id:'ChIJtwrN_RtsEg0R0er6ftofp4M', b:'Intimate one-hour flamenco show in a Santa Cruz courtyard.', h:'Shows in the evening, book ahead'},
+  {k:'carboneria', n:'La Carbonería', c:'culture', la:37.38787, ln:-5.98711, id:'ChIJBWiuZxxsEg0RfiYITcSxxew', b:'Former coal warehouse with free flamenco and a patio bar. No photos.', h:'Evening shows'},
+  {k:'anselma', n:'Antigua Casa Anselma (Triana)', c:'culture', la:37.38463, ln:-6.00576, id:'ChIJQdayHcltEg0RyyygS6SS7NQ', b:'Late-night bar where flamenco erupts from about midnight.', h:'Music from about 00:30'},
+  {k:'rinconcillo', n:'El Rinconcillo', c:'eat', la:37.39339, ln:-5.98836, id:'ChIJObo_YwNsEg0RIGq8Rqq0ojA', b:'Bar since 1670. Bill chalked on the wood.', h:'Daily 13:00–17:30 and 20:00–00:30'},
+  {k:'morales', n:'Bar Casa Morales', c:'eat', la:37.38647, ln:-5.99461, id:'ChIJmf09pRBsEg0Rqg4J-ueEfmo', b:'Classic bodega behind the Cathedral, traditional menu.', h:'Mon–Sat 12:30–16:00 and 20:00–00:00'},
+  {k:'columnas', n:'Bodega Santa Cruz Las Columnas', c:'eat', la:37.38602, ln:-5.99076, id:'ChIJr6w91htsEg0RJ7OrcxZD8Eg', b:'Standing-room tapas and tostada breakfasts in Santa Cruz.', h:'Daily 08:00–00:00'},
+  {k:'romero', n:'Bodeguita Romero', c:'eat', la:37.38708, ln:-5.99567, id:'ChIJ2b5GwhBsEg0R6QSnAOmCZK0', b:'Local lunch favourite. Put your name on the list.', h:'Tue–Wed 13:00–17:00, closed Mon'},
+  {k:'eslava', n:'Espacio Eslava', c:'eat', la:37.39749, ln:-5.99694, id:'ChIJn3Y6IglsEg0R2Ig0DZZQtRs', b:'San Lorenzo tapas institution. Reserve.', h:'Tue–Sat 12:30–00:00, closed Mon'},
+  {k:'mtriana', n:'Mercado de Triana', c:'eat', la:37.38571, ln:-6.00361, id:'ChIJqdxAVhNsEg0RupAyfuheU_E', b:'Fish, ham, produce and small bars.', h:'Daily 09:00–15:00'},
+  {k:'mferia', n:'Mercado de la Feria', c:'eat', la:37.39950, ln:-5.99156, id:'ChIJ80UkAQdsEg0RSx4qcPXvaCk', b:'Local market with tapas bars. Fewer tourists than Triana.', h:'Mon–Sat, food bars busiest from 13:00'},
+  {k:'sanleandro', n:'Convento de San Leandro', c:'sweet', la:37.39063, ln:-5.98839, id:'ChIJScyjpxxsEg0RvAMbxNS8d6U', b:'Convent yemas via the turning shelf. Cash.', h:'Mon–Sat 09:00–13:00 and 17:00–19:00'},
+  {k:'santana', n:'Santa Ana Ceramics (Triana)', c:'sweet', la:37.38546, ln:-6.00465, id:'ChIJ3963McdtEg0RuNTIJbL37Qo', b:'Hand-painted tiles, plates and oil bottles.', h:'Mon–Sat 10:30–20:00'},
+  {k:'airport', n:'Seville airport (SVQ)', c:'base', la:37.4180, ln:-5.8931, b:'EA bus or taxi to the centre, 25 to 35 minutes.', h:''}
+];
+const pin = k => PINS.find(p => p.k === k);
+
+/* d=day index, s/e=HH:MM (hours may pass 24), k=track */
+const BLOCKS = [
+/* ----- Monday ----- */
+{id:'m1', d:0, s:'09:30', e:'10:30', k:'work', t:'Land and transfer', p:'Seville airport (SVQ)', pin:'airport',
+ n:'The EA airport bus takes about 35 minutes (roughly €4–6). A taxi from the rank is a fixed fare of about €25–30 and 25–30 minutes. Taxi is easier with a laptop bag if you head straight to the cafe.'},
+{id:'m2', d:0, s:'10:30', e:'15:00', k:'work', t:'Work session at LATE', p:'Calle Amor de Dios 36', pin:'late',
+ n:'Open 08:30–18:30 today, about 10 minutes on foot from Plaza del Salvador. Reviewers mention WiFi, which is rare in Seville cafes. It is small: arrive early, order every couple of hours. Backup: Syra on Calle Álvarez Quintero (08:00–20:00) is closer to the flat but tiny.',
+ tags:['WiFi reported']},
+{id:'m3', d:0, s:'15:00', e:'18:30', k:'work', t:'Check in and keep working', p:'Minarete del Salvador', pin:'base',
+ n:'Check-in opens at 15:00. Message the host beforehand about a bag drop or early check-in (a ready-to-send message is in the Go tab).'},
+{id:'m4', d:0, s:'15:00', e:'16:15', k:'explore', t:'Land and transfer', p:'Seville airport (SVQ)', pin:'airport',
+ n:'After passport control and bags, take the EA bus or a taxi (fixed fare about €25–30). You should reach the flat around 16:15.'},
+{id:'m5', d:0, s:'16:40', e:'17:45', k:'explore', t:'Casa de Pilatos', p:'Plaza de Pilatos 1', pin:'pilatos', gem:true,
+ n:'A 15th-century Renaissance and Mudéjar palace with tiled courtyards, orange trees and Roman statues. It closes at 18:00, so head straight there. A recent visitor paid €12 for the ground floor in 2026. Allow one to one and a half hours.'},
+{id:'m6', d:0, s:'17:45', e:'18:20', k:'explore', t:'Yemas from the convent', p:'Convento de San Leandro, Plaza San Ildefonso 1', pin:'sanleandro', gem:true,
+ n:'Open Mon–Sat 09:00–13:00 and 17:00–19:00, and only two minutes from Pilatos. Ring the bell, say what you want, and put cash on the turning shelf (the torno). Yemas are sweet egg-yolk candies. Buy a small box for the evening.',
+ tags:['Cash only']},
+{id:'m7', d:0, s:'18:30', e:'19:15', k:'together', t:'A caña on the plaza', p:'Plaza del Salvador', pin:'base',
+ n:'Meet at Plaza del Salvador. A caña (small draught beer) and a few olives on a terrace is the standard Sevillano reset.'},
+{id:'m8', d:0, s:'19:15', e:'20:30', k:'together', t:'Sunset on the Setas', p:'Setas de Sevilla, Plaza de la Encarnación', pin:'setas',
+ n:'Open until 23:45. Walk the wooden rooftop for the city view. Sunset is at about 20:12. Reviewers say one ticket lets you come back the same evening to see it lit up.'},
+{id:'m9', d:0, s:'20:30', e:'22:15', k:'together', t:'Dinner at El Rinconcillo', p:'Calle Gerona 40', pin:'rinconcillo',
+ n:'A bar since 1670, about 8 minutes from the flat. Open Mon 13:00–17:30 and 20:00–00:30. Standing at the bar is normal and the waiter chalks your bill on the wood. Order espinacas con garbanzos, solomillo al whisky and rabo de toro.',
+ tags:['Since 1670']},
+{id:'m10', d:0, s:'22:15', e:'23:15', k:'together', t:'Floodlit Cathedral and Santa Cruz', p:'Plaza del Triunfo and Santa Cruz', pin:'cathedral', gem:true,
+ n:'Walk past the lit-up Giralda, then into the quiet lanes of Santa Cruz: Callejón del Agua and Plaza de Doña Elvira. Free, and best after 22:00 when the tour groups are gone.'},
+{id:'m11', d:0, s:'23:15', e:'24:30', k:'together', t:'Nightcap in Alfalfa', p:'Plaza de la Alfalfa', pin:'base',
+ n:'The square and the streets around it stay lively well past midnight. A copa of fino or manzanilla, or a vermouth on tap, is the local way to end the night.'},
+/* ----- Tuesday ----- */
+{id:'t1', d:1, s:'08:00', e:'09:00', k:'together', t:'Breakfast at Las Columnas', p:'Calle Rodrigo Caro 1', pin:'columnas',
+ n:'Open from 08:00. Have breakfast the Sevillano way at the bar: tostada con aceite y tomate, or with manteca colorá (pork lard with paprika), and a café con leche.'},
+{id:'t2', d:1, s:'09:00', e:'09:55', k:'together', t:'Santa Cruz in the empty hour', p:'Callejón del Agua, Plaza de los Venerables, Patio de Banderas', pin:'cathedral', gem:true,
+ n:'The lanes are yours before the tour groups arrive. Be back at the flat by 09:55 so the work day can start at 10:00.'},
+{id:'t3', d:1, s:'10:00', e:'16:30', k:'work', t:'Work day at the flat', p:'Minarete del Salvador', pin:'base',
+ n:'Time off starts at 16:30.'},
+{id:'t4', d:1, s:'10:15', e:'12:45', k:'explore', t:'Real Alcázar', p:'Puerta del León, Plaza del Triunfo', pin:'alcazar', book:true,
+ n:'Open 09:30–19:00. Book the earliest timed slot you can, since busy mornings sell out. Allow about 2.5 hours. The gardens are the shaded part, so save them for last.',
+ tags:['Book online']},
+{id:'t5', d:1, s:'12:45', e:'14:15', k:'explore', t:'Cathedral and Giralda', p:'Plaza del Triunfo', pin:'cathedral', book:true,
+ n:'Opens about 10:45 (Mon–Sat), last entry about 18:00, and the tower closes about 30 minutes earlier. The ticket (about €14 online) also covers the Iglesia del Salvador on your doorstep. There have been works on the Giralda this year, so check the official site for tower access. Cover shoulders and knees.',
+ tags:['Book online']},
+{id:'t6', d:1, s:'14:15', e:'15:45', k:'explore', t:'Lunch at Bodeguita Romero', p:'Calle Harinas 10', pin:'romero',
+ n:'Open Tue 13:00–17:00 (closed Monday). Give your name at the bar and wait with a drink. Try a pringá montadito, salmorejo, espinacas con garbanzos, and the potatoes that reviewers rave about.'},
+{id:'t7', d:1, s:'15:45', e:'16:30', k:'explore', t:'Siesta or a coffee', p:'Near the flat', pin:'base',
+ n:'Most small shops close about 14:00–17:00, so this is a natural pause. Cool off at the flat or have a café con hielo.'},
+{id:'t8', d:1, s:'16:30', e:'18:15', k:'together', t:'Museo de Bellas Artes', p:'Plaza del Museo 9', pin:'bellas', gem:true,
+ n:'Meet at the flat and walk over (about 10 minutes). Open Tue–Sat 09:00–21:00. Entry is €1.50 for non-EU visitors, cash only. A former convent with a Murillo room, Zurbarán and Valdés Leal, lockers for bags, and courtyards to rest in.',
+ tags:['Cash only']},
+{id:'t9', d:1, s:'18:15', e:'19:15', k:'together', t:'River walk to the park', p:'Torre del Oro and Paseo de Cristóbal Colón', pin:'torre',
+ n:'Walk the Guadalquivir past the Torre del Oro and the Maestranza bullring, then along Paseo de las Delicias toward the park. About 40 minutes at a stroll.'},
+{id:'t10', d:1, s:'19:15', e:'20:20', k:'together', t:'Plaza de España at golden hour', p:'Parque de María Luisa', pin:'plaza',
+ n:'Sunset is at about 20:12. Find the tiled provincial alcoves, cross the little bridges, then wander into Parque de María Luisa.'},
+{id:'t11', d:1, s:'20:20', e:'20:50', k:'together', t:'Taxi back to the centre', p:'Plaza de España to Santa Cruz', pin:'casaflamenco',
+ n:'About 10 minutes. Book a show for 21:00 or later so you are not rushing.'},
+{id:'t12', d:1, s:'21:00', e:'22:00', k:'together', t:'Flamenco (pick one)', p:'Santa Cruz', pin:'casaflamenco', book:true, gem:true,
+ n:'The Flamenco Biennial runs until 3 October, so this is a good week. Pick one:',
+ opts:[
+  {h:'La Casa del Flamenco', t:'Calle Ximénez de Enciso 28. Intimate one-hour show in a courtyard, about €25 per visitors. Book the 21:00 or the latest slot.'},
+  {h:'Biennial show', t:'Around a dozen venues, tickets from about €12 at labienal.com. Check what is on tonight.'},
+  {h:'La Carbonería', t:'Calle Céspedes 21. Free entry, atmospheric, shows in the evening. Arrive early for a seat near the stage, no photos, leave a donation.'}
+ ], tags:['Book ahead']},
+{id:'t13', d:1, s:'22:15', e:'23:45', k:'together', t:'Dinner at Casa Morales', p:'Calle García de Vinuesa 11', pin:'morales',
+ n:'Open Tue 12:30–16:00 and 20:00–00:00. An old bodega feel, with a darker back room. Order carrillada (pork cheek), rabo de toro, solomillo a la crema and a pringá.'},
+{id:'t14', d:1, s:'24:15', e:'25:30', k:'together', t:'Wildcard: flamenco at Casa Anselma', p:'Calle Pagés del Corro 49, Triana', pin:'anselma', gem:true,
+ n:'A Triana bar where singers and dancers turn up around midnight and the room joins in. Reviewers report free entry and drinks around €7, with music starting about 00:30. Take a taxi both ways (10–15 minutes). Skip if the earlier flamenco was plenty.',
+ tags:['Very late']},
+/* ----- Wednesday ----- */
+{id:'w1', d:2, s:'08:30', e:'09:15', k:'together', t:'Slow coffee at Hispalis', p:'Calle Amor de Dios 1', pin:'hispalis',
+ n:'A roastery cafe that opens at 08:30. Small and it can queue. Any bar full of locals doing tostadas is just as good.'},
+{id:'w2', d:2, s:'09:15', e:'10:00', k:'together', t:'Cross to Triana', p:'Puente de Isabel II', pin:'mtriana',
+ n:'Walk over the Triana bridge with the skyline behind you. Triana is the old potters and sailors quarter, and a cradle of flamenco.'},
+{id:'w3', d:2, s:'10:00', e:'11:00', k:'together', t:'Mercado de Triana', p:'Calle San Jorge 6', pin:'mtriana',
+ n:'Open 09:00–15:00. Stalls of fish, ham, cheese and produce, plus small bars. The remains of the San Jorge castle sit beneath the market (check the exhibit hours).'},
+{id:'w4', d:2, s:'11:00', e:'12:00', k:'together', t:'Azulejos and ceramics', p:'Santa Ana Ceramics, Calle Antillano Campos 2', pin:'santana',
+ n:'Open from 10:30. Hand-painted plates, tiles and oil bottles. Some reviewers found thin cup bottoms and no tax-free service, so check each piece and wrap it well for the plane.'},
+{id:'w5', d:2, s:'12:00', e:'12:40', k:'together', t:'Riverfront on Calle Betis', p:'Calle Betis, Triana', pin:'torre',
+ n:'The best skyline view of the Torre del Oro and the Giralda is from this side of the river. Walk back over the bridge.'},
+{id:'w6', d:2, s:'12:40', e:'13:15', k:'together', t:'Check out and leave bags', p:'Minarete del Salvador', pin:'base',
+ n:'Confirm the check-out time with your host and ask to leave bags at the flat until 18:45.'},
+{id:'w7', d:2, s:'13:15', e:'15:15', k:'together', t:'Lunch at Espacio Eslava', p:'Calle Eslava 3, San Lorenzo', pin:'eslava', book:true,
+ n:'Open Tue–Sat 12:30–00:00 (closed Monday). Popular, so reserve. Reviewers praise the costillas a la miel (honey ribs) and the pâté. If you would rather graze at market bars, the Mercado de la Feria is ten minutes away.',
+ tags:['Reserve']},
+{id:'w8', d:2, s:'15:15', e:'16:00', k:'together', t:'Alameda de Hércules', p:'Alameda de Hércules', pin:'mferia',
+ n:'Two Roman columns crown this long, bohemian plaza. A coffee at an indie cafe is a good way to wait out the hottest hour.'},
+{id:'w9', d:2, s:'16:00', e:'17:00', k:'together', t:'San Luis de los Franceses', p:'Calle San Luis 37', pin:'sanluis', gem:true,
+ n:'Open 10:00–14:00 and 16:00–20:00. One of the most elaborate Baroque church facades in the city, quiet inside, around €4 per visitors. Allow 45 minutes.'},
+{id:'w10', d:2, s:'17:00', e:'17:45', k:'together', t:'Last convent sweets', p:'Convento de San Leandro', pin:'sanleandro',
+ n:'Back for yemas to take home before it closes at 19:00. Add jamón or olive oil from a delicatessen if there is room in the bag.',
+ tags:['Cash only']},
+{id:'w11', d:2, s:'17:45', e:'18:30', k:'together', t:'One last tapa', p:'Bodega Santa Cruz Las Columnas', pin:'columnas',
+ n:'Open until midnight. A final fino and a montadito standing at the bar.'},
+{id:'w12', d:2, s:'18:30', e:'18:45', k:'together', t:'Collect bags', p:'Minarete del Salvador', pin:'base', n:'Leave by 18:45 at the latest.'},
+{id:'w13', d:2, s:'18:45', e:'19:30', k:'together', t:'Taxi to the airport', p:'Seville airport (SVQ)', pin:'airport',
+ n:'About 25–30 minutes, fixed fare roughly €25–30. That puts you at the airport nearly three hours before the 22:00 flight.'}
+];
+
+const RESERVE = [
+  {t:'Hospital de la Caridad', n:'Murillo paintings in the chapel where they were hung. Hours were not confirmed, and a visitor reported free entry on Mondays, so check on the day.'},
+  {t:'Antiquarium under the Setas', n:'Roman remains under the mushrooms. Confirm hours before going.'},
+  {t:'Basílica de la Macarena and the old city walls', n:'A short walk from Alameda de Hércules.'},
+  {t:'Iglesia del Salvador', n:'Included in your Cathedral ticket, so it costs nothing extra if you have it.'},
+  {t:'Bienal de Flamenco', n:'Runs until 3 October across about a dozen venues. Check labienal.com for any night you are free.'},
+  {t:'A hammam-style bath in Santa Cruz', n:'A relaxed pre-flight option if a slot is free. Not checked, so confirm hours and book.'}
+];
+
+/* ---------- Food ---------- */
+const DISHES = [
+  {n:'Salmorejo', loc:'Cold tomato cream', d:'Thicker than gazpacho, made with bread, oil and tomato, then topped with jamón and boiled egg. Perfect on a warm evening.', ask:'Un salmorejo, por favor.'},
+  {n:'Espinacas con garbanzos', loc:'Spinach and chickpeas', d:'A Sevillian classic with cumin, garlic and a hit of vinegar. Reviewers single it out at El Rinconcillo.', ask:'Una tapa de espinacas con garbanzos.'},
+  {n:'Pringá', loc:'Slow-cooked meat stew', d:'Pork, chorizo and morcilla stewed for hours, then pressed onto small bread as a montadito. Humble, deeply local.', ask:'Un montadito de pringá.'},
+  {n:'Solomillo al whisky', loc:'Pork in whisky sauce', d:'Tender pork loin in a garlic and whisky sauce. A bar standard, and a favourite at El Rinconcillo.', ask:'Solomillo al whisky, media ración.'},
+  {n:'Carrillada', loc:'Braised pork cheek', d:'Meltingly soft in a red wine sauce. Visitors single it out at Casa Morales.', ask:'Una carrillada, por favor.'},
+  {n:'Rabo de toro', loc:'Oxtail stew', d:'Slow-braised until it falls off the bone. Traditionally tied to Andalusian bullfighting culture.', ask:'Rabo de toro, para compartir.'},
+  {n:'Ensaladilla rusa', loc:'Potato and tuna salad', d:'Not really Russian: cold potato, tuna, egg and mayonnaise. Every bar has its own version.', ask:'Una tapa de ensaladilla.'},
+  {n:'Tortillitas de camarones', loc:'Shrimp fritters', d:'Lacy, crisp fritters from the Cádiz coast that are everywhere in Seville. Eat them hot.', ask:'Unas tortillitas de camarones.'},
+  {n:'Pescaíto frito', loc:'Fried fish platter', d:'Lightly floured fish fried in olive oil. Look for adobo (marinated) and puntillitas (baby squid).', ask:'Una ración de pescaíto frito.'},
+  {n:'Tostada con manteca colorá', loc:'Breakfast toast', d:'Toast spread with paprika pork lard. Or order aceite y tomate: olive oil and grated tomato.', ask:'Una tostada con aceite y tomate.'},
+  {n:'Jamón ibérico', loc:'Cured ham', d:'Sliced by hand from the leg hanging over the bar. Best with a chilled fino.', ask:'Media ración de jamón ibérico.'}
+];
+
+/* hours: [mon,tue,wed], null=closed */
+const EAT = [
+  {k:'rinconcillo', area:'Near Alfalfa', order:'Espinacas con garbanzos, solomillo al whisky, rabo de toro', price:'€€', hrs:['13:00–17:30, 20:00–00:30','13:00–17:30, 20:00–00:30','13:00–17:30, 20:00–00:30'], note:'Tables fill quickly, standing at the bar is fine.'},
+  {k:'morales', area:'Behind the Cathedral', order:'Carrillada, rabo de toro, pringá, solomillo a la crema', price:'€€', hrs:['12:30–16:00, 20:00–00:00','12:30–16:00, 20:00–00:00','12:30–16:00, 20:00–00:00'], note:'Old bodega feel, darker back room for dinner.'},
+  {k:'columnas', area:'Santa Cruz', order:'Tostadas at breakfast, tapas from about €3 later', price:'€', hrs:['08:00–00:00','08:00–00:00','08:00–00:00'], note:'Mostly standing. Very good value.'},
+  {k:'romero', area:'Near Plaza San Francisco', order:'Pringá montadito, salmorejo, potatoes, sardine on toast', price:'€€', hrs:[null,'13:00–17:00','13:00–17:00'], note:'Lunch only on your days. Put your name on the list.'},
+  {k:'eslava', area:'San Lorenzo', order:'Costillas a la miel, pâté, octopus', price:'€€', hrs:[null,'12:30–00:00','12:30–00:00'], note:'Reserve. Locals treat it as a favourite.'},
+  {k:'mtriana', area:'Triana', order:'Jamón, cheese, fresh fish and a tostada', price:'€', hrs:['09:00–15:00','09:00–15:00','09:00–15:00'], note:'Busier and pricier than the Feria market.'},
+  {k:'mferia', area:'Calle Feria', order:'Market-bar tapas and fruit', price:'€', hrs:['08:00–00:00','08:00–00:00','08:00–00:00'], note:'Mostly locals. The food bars really open from about 13:00.'}
+];
+const SWEETS = [
+  {n:'Yemas de convento', d:'Sweet egg-yolk candies made by cloistered nuns. At Convento de San Leandro you ring the bell, order through the door and put cash on the turning shelf. Open Mon–Sat 09:00–13:00 and 17:00–19:00.'},
+  {n:'Tocino de cielo', d:'A dense, sweet egg-yolk custard, often sold at convents and pastry shops. Small pieces are plenty.'}
+];
+const DRINKS = [
+  {n:'Caña', d:'A small draught beer, usually Cruzcampo, Seville\'s own. Order "una caña".'},
+  {n:'Tinto de verano', d:'Red wine with lemon soda over ice. Lighter than sangría and a bar staple.'},
+  {n:'Fino and manzanilla', d:'Dry, pale sherries served chilled. Ideal with ham, fried fish and salty tapas.'},
+  {n:'Amontillado and oloroso', d:'Darker, nuttier sherries that go with stews, cheeses and after-dinner talk.'},
+  {n:'Vermut', d:'Vermouth on tap over ice with an orange slice. A pre-lunch habit.'},
+  {n:'Café con hielo', d:'A hot espresso plus a glass of ice, poured over yourself. The local iced coffee.'}
+];
+
+/* ---------- Know ---------- */
+const RHYTHM = [
+  ['08:00–10:00','Breakfast at the bar: tostada and café con leche.'],
+  ['10:00–13:00','Sights while it is cool. Book the Alcázar early.'],
+  ['13:30–16:00','Lunch and a caña. Many small shops close about 14:00–17:00.'],
+  ['17:00–19:00','Museums, convent sweets, a merienda coffee.'],
+  ['20:00–21:00','Early tapas. Locals mostly start after 21:00.'],
+  ['21:00–00:00','Dinner and flamenco.'],
+  ['00:00–02:00','Bars stay lively. Casa Anselma wakes up after midnight.']
+];
+const PHRASES = [
+  ['Una caña, por favor','oo-na KAH-nya','A small beer, please.'],
+  ['¿Qué nos recomienda?','keh nos reh-ko-mee-EN-da','What do you recommend?'],
+  ['Una tapa / media ración / ración','','Small plate / half plate / full plate.'],
+  ['Para compartir','PA-ra kom-par-TEER','To share.'],
+  ['La cuenta, por favor','la KWEN-ta','The bill, please.'],
+  ['¡Está buenísimo!','es-TA bwen-EE-see-mo','It is delicious!'],
+  ['Buenas','BWE-nas','Casual hello when you walk in.']
+];
+const ETIQUETTE = [
+  'Order at the bar, drink first, pay at the end. Many old bars chalk your bill on the wood.',
+  'Tipping is not expected. Rounding up or leaving small change is normal.',
+  'Cash matters here: Bellas Artes (€1.50) and the convent sweets are cash only, and some small bars prefer it.',
+  'Cover shoulders and knees for the Cathedral.',
+  'Highs are around 30°C at this time of year. Carry water, wear comfortable shoes for cobbles, and do outdoor sights early or late.',
+  'Keep phones and bags zipped in crowds at the Cathedral, the Setas and Plaza de España.',
+  'Emergency number in Spain: 112.'
+];
+const VOCAB = [
+  ['Tapear','To go bar-hopping for small plates.'],
+  ['Sobremesa','Lingering at the table after the meal ends.'],
+  ['Torno','The turning shelf at convents where you receive sweets.'],
+  ['Azulejo','A painted glazed tile, the signature of Seville.'],
+  ['Mudéjar','Islamic-influenced design built under Christian rule, seen in the Alcázar and Casa de Pilatos.']
+];
+const WALKS = [
+  ['Cathedral','5 min'],['Setas','5 min'],['Casa de Pilatos','7 min'],['San Leandro sweets','6 min'],['El Rinconcillo','8 min'],
+  ['Casa Morales','6 min'],['Las Columnas','6 min'],['Real Alcázar','10 min'],['LATE cafe','10 min'],['Bellas Artes','10 min'],
+  ['Eslava','13 min'],['Torre del Oro','13 min'],['San Luis de los Franceses','14 min'],['Mercado de Triana','18 min'],['Plaza de España','25 min or taxi']
+];
+
+const CHECKLIST = [
+  {id:'c1', t:'Book a timed Real Alcázar ticket', s:'Tuesday, earliest slot from about 10:00'},
+  {id:'c2', t:'Buy Cathedral and Giralda ticket online', s:'Also includes the Iglesia del Salvador'},
+  {id:'c3', t:'Book flamenco for Tuesday 21:00', s:'La Casa del Flamenco, or a Biennial show at labienal.com'},
+  {id:'c4', t:'Reserve Espacio Eslava for Wednesday lunch', s:'Around 13:15, phone +34 954 90 65 68'},
+  {id:'c5', t:'Message the host about bags and early check-in', s:'Copy the message in the Go tab'},
+  {id:'c6', t:'Bring some cash', s:'€1.50 Bellas Artes, convent sweets, small bars'},
+  {id:'c7', t:'Download an offline map of Seville', s:'Helps when mobile data is patchy in the old town'}
+];
+
+const HOST_EN = "Hi! We're booked at Minarete del Salvador from Monday 28 to Wednesday 30 September. I land at 09:30 on Monday and check-in is at 15:00. Could I drop my bag earlier, or check in early if the apartment is ready? My partner arrives around 16:00. On Wednesday we fly at 22:00, so could you keep our bags after check-out until about 18:45? Thank you!";
+const HOST_ES = "¡Hola! Tenemos reserva en Minarete del Salvador del lunes 28 al miércoles 30 de septiembre. Aterrizo el lunes a las 09:30 y el check-in es a las 15:00. ¿Podría dejar la maleta antes, o hacer el check-in antes si el apartamento está listo? Mi pareja llega sobre las 16:00. El miércoles volamos a las 22:00, ¿podrían guardarnos las maletas después del check-out hasta las 18:45? ¡Gracias!";
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const main = $('#main'), navEl = $('#nav');
+const TRIP0 = Date.UTC(2026, 8, 28);
+
+const store = (() => {
+  const k = 'sev26_';
+  try {
+    localStorage.setItem(k + 't', '1'); localStorage.removeItem(k + 't');
+    return {
+      get: (a, d) => { try { const v = localStorage.getItem(k + a); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+      set: (a, v) => { try { localStorage.setItem(k + a, JSON.stringify(v)); } catch (e) {} }
+    };
+  } catch (e) {
+    const m = {};
+    return { get: (a, d) => (a in m ? m[a] : d), set: (a, v) => { m[a] = v; } };
+  }
+})();
+
+const state = {
+  tab: 'now', day: 0, filter: 'all', eat: 'dishes', mapCat: 'all', focus: null, preview: null,
+  done: store.get('done', {}), checks: store.get('checks', {}), open: {}
+};
+
+const toMin = s => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
+const fmt = min => { const m = ((min % 1440) + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+BLOCKS.forEach(b => { b.a0 = b.d * 1440 + toMin(b.s); b.a1 = b.d * 1440 + toMin(b.e); });
+const FIRST = Math.min(...BLOCKS.map(b => b.a0));
+const LAST = Math.max(...BLOCKS.map(b => b.a1));
+
+function madridNow() {
+  if (state.preview != null) return state.preview;
+  const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+  const g = t => +parts.find(p => p.type === t).value;
+  const dayIdx = Math.round((Date.UTC(g('year'), g('month') - 1, g('day')) - TRIP0) / 86400000);
+  return dayIdx * 1440 + g('hour') * 60 + g('minute');
+}
+
+const mapsUrl = p => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(p.n.replace(/ \(.*\)/, '') + ' Sevilla') + (p.id ? '&query_place_id=' + p.id : '');
+
+function starPts(cx, cy, ro, ri, n) {
+  const a = [];
+  for (let i = 0; i < n * 2; i++) {
+    const r = i % 2 ? ri : ro, ang = Math.PI * i / n - Math.PI / 2;
+    a.push((cx + r * Math.cos(ang)).toFixed(1) + ',' + (cy + r * Math.sin(ang)).toFixed(1));
+  }
+  return a.join(' ');
+}
+(function tileBg() {
+  const svg = "<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'><g fill='none' stroke='#4A7DE0' stroke-width='1.2'><polygon points='" + starPts(32, 32, 28, 15, 8) + "'/><circle cx='32' cy='32' r='6'/><path d='M0 0l8 8M64 0l-8 8M0 64l8-8M64 64l-8-8'/></g></svg>";
+  document.documentElement.style.setProperty('--tile', 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")');
+})();
+
+const IC = {
+  now: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  plan: '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/>',
+  eat: '<path d="M7 3v8a2 2 0 0 0 2 2v8M11 3v8M7 7h4"/><path d="M17 3c-2 2-2.5 5-2.5 8h2.5v10"/>',
+  map: '<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>',
+  know: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 8h6"/>',
+  go: '<path d="M3 11l18-8-8 18-2-8z"/>'
+};
+const TABS = [['now', 'Now'], ['plan', 'Plan'], ['eat', 'Eat'], ['map', 'Map'], ['know', 'Know'], ['go', 'Go']];
+
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('on'), 1800);
+}
+async function copyText(txt) {
+  try { await navigator.clipboard.writeText(txt); toast('Copied'); }
+  catch (e) {
+    const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); toast('Copied'); } catch (e2) { toast('Press and hold to copy'); }
+    ta.remove();
+  }
+}
+
+/* ---------- nav ---------- */
+function renderNav() {
+  navEl.innerHTML = TABS.map(([k, l]) =>
+    '<button data-a="tab" data-v="' + k + '"' + (state.tab === k ? ' aria-current="page"' : '') + '>' +
+    (state.tab === k ? '<svg class="tabstar" viewBox="0 0 24 24"><polygon points="' + starPts(12, 12, 11, 5, 8) + '"/></svg>' : '') +
+    '<svg class="ic" viewBox="0 0 24 24">' + IC[k] + '</svg>' + l + '</button>').join('');
+}
+
+/* ---------- NOW ---------- */
+function laneState(lane, t) {
+  const L = BLOCKS.filter(b => b.k === 'together' || b.k === lane).sort((a, b) => a.a0 - b.a0);
+  return { cur: L.find(b => t >= b.a0 && t < b.a1), nxt: L.find(b => b.a0 > t) };
+}
+function nextLine(b, t) {
+  if (!b) return '<div class="next">Nothing more planned in this lane.</div>';
+  const mins = b.a0 - t, h = Math.floor(mins / 60), m = mins % 60;
+  const when = mins < 1 ? 'now' : (h ? h + ' h ' : '') + (m ? m + ' min' : '');
+  return '<div class="next">Next in ' + when.trim() + ': <b>' + b.t + '</b> at ' + fmt(b.a0) + '</div>';
+}
+function laneCard(label, cls, cur, nxt, t, onlyNext) {
+  let body;
+  if (cur && !onlyNext) {
+    const pct = Math.max(2, Math.min(100, Math.round((t - cur.a0) / (cur.a1 - cur.a0) * 100)));
+    body = '<h3>' + cur.t + '</h3><div class="meta tnum">' + fmt(cur.a0) + '–' + fmt(cur.a1) + ' at ' + cur.p + '</div>' +
+      '<div class="bar"><i style="width:' + pct + '%"></i></div>';
+  } else if (onlyNext && nxt) {
+    body = '<h3>' + nxt.t + '</h3><div class="meta tnum">' + fmt(nxt.a0) + ' at ' + nxt.p + '</div><div style="height:8px"></div>';
+  } else {
+    body = '<h3>Free time</h3><div class="meta">A gap in this lane. Wander, rest or eat.</div><div style="height:8px"></div>';
+  }
+  return '<section class="lane ' + cls + '"><div class="who"><span class="dot"></span>' + label + '</div>' + body + (onlyNext ? '' : nextLine(nxt, t)) + '</section>';
+}
+function viewNow() {
+  const t = madridNow();
+  const phase = t < FIRST ? 'before' : (t >= LAST ? 'after' : 'during');
+  let head, lanes = '';
+  if (phase === 'before') {
+    const rem = FIRST - t, d = Math.floor(rem / 1440), h = Math.floor((rem % 1440) / 60), m = rem % 60;
+    head = '<h2>Landing in</h2><div class="count"><div><b>' + d + '</b><span>days</span></div><div><b>' + h + '</b><span>hours</span></div><div><b>' + m + '</b><span>min</span></div></div>' +
+      '<h2>First up</h2>';
+    const w = laneState('work', t), e = laneState('explore', t);
+    lanes = '<div class="lanes">' + laneCard('Working', 't-work', null, w.nxt, t, true) + laneCard('Exploring', 't-explore', null, e.nxt, t, true) + '</div>';
+  } else if (phase === 'after') {
+    head = '<h2>Hasta pronto</h2><p class="sub">Three days is a good first look. The back-pocket list in the Plan tab is a ready-made start for next time.</p>';
+  } else {
+    head = '<h2>Right now</h2>';
+    const w = laneState('work', t), e = laneState('explore', t);
+    if (w.cur && e.cur && w.cur.id === e.cur.id) lanes = '<div class="lanes">' + laneCard('Together', 't-together', w.cur, w.nxt, t) + '</div>';
+    else lanes = '<div class="lanes">' + laneCard('Working', 't-work', w.cur, w.nxt, t) + laneCard('Exploring', 't-explore', e.cur, e.nxt, t) + '</div>';
+  }
+  const banner = state.preview != null ? '<button class="btn" style="margin:12px 0 0" data-a="live">Previewing ' + DAYS[Math.max(0, Math.min(2, Math.floor(t / 1440)))].short + ' ' + fmt(t) + '. Tap to return to live time.</button>' : '';
+  const done = CHECKLIST.filter(c => state.checks[c.id]).length;
+  return '<div class="screen"><div class="hero"><div class="plaque"><h1>Sevilla</h1><div class="ln">28 to 30 September 2026</div><div class="ln2">Sunrise ' + SUN[0] + ', sunset ' + SUN[1] + '</div></div><div class="hero-tiles" style="margin-top:18px"></div></div>' +
+    banner + head + lanes +
+    '<h2>Your three days</h2><div class="days">' + DAYS.map((d, i) => '<button class="dtile" data-a="gotoday" data-v="' + i + '"><b>' + d.short + '</b><span>' + d.theme + '</span></button>').join('') + '</div>' +
+    '<h2>Book ahead <span class="sub tnum" style="font-family:var(--sans);font-size:13px">' + done + ' of ' + CHECKLIST.length + '</span></h2><div class="box">' +
+    CHECKLIST.map(c => '<button class="check" role="checkbox" aria-checked="' + !!state.checks[c.id] + '" data-a="check" data-v="' + c.id + '"><span class="bx"></span><span><span class="tx">' + c.t + '</span><small>' + c.s + '</small></span></button>').join('') + '</div></div>';
+}
+
+/* ---------- PLAN ---------- */
+function blockHtml(b) {
+  const tr = TRACKS[b.k], p = b.pin ? pin(b.pin) : null, open = !!state.open[b.id], done = !!state.done[b.id];
+  const opts = b.opts ? '<ul class="opts">' + b.opts.map(o => '<li><b>' + o.h + '.</b> ' + o.t + '</li>').join('') + '</ul>' : '';
+  const tags = (b.book || b.gem || b.tags) ? '<div class="tags">' + (b.gem ? '<span class="tag gem">Local gem</span>' : '') + (b.tags || []).map(x => '<span class="tag' + (/Book|Reserve/.test(x) ? ' book' : '') + '">' + x + '</span>').join('') + '</div>' : '';
+  const acts = '<div class="acts">' + (p ? '<a class="btn pri" target="_blank" rel="noopener" href="' + mapsUrl(p) + '">Open in Maps</a><button class="btn" data-a="showpin" data-v="' + p.k + '">Show on map</button>' : '') +
+    '<button class="btn" data-a="done" data-v="' + b.id + '">' + (done ? 'Undo done' : 'Mark done') + '</button></div>';
+  return '<div class="blk ' + tr.cls + (done ? ' done' : '') + '"><div class="time"><b>' + fmt(b.a0) + '</b><span>' + fmt(b.a1) + '</span></div><div class="rail"><i></i></div>' +
+    '<div class="card' + (open ? ' open' : '') + '"><button class="head" data-a="toggle" data-v="' + b.id + '" aria-expanded="' + open + '"><span class="lbl">' + tr.label + '</span><span class="ttl">' + b.t + '</span><span class="place">' + b.p + '</span><span class="teaser">' + b.n + '</span></button>' +
+    '<div class="more"><div>' + opts + tags + acts + '</div></div></div></div>';
+}
+function viewPlan() {
+  const f = state.filter;
+  const list = BLOCKS.filter(b => b.d === state.day && (f === 'all' || (f === 'together' ? b.k === 'together' : (b.k === 'together' || b.k === f)))).sort((a, b) => a.a0 - b.a0 || a.k.localeCompare(b.k));
+  const D = DAYS[state.day];
+  const chips = [['all', 'Everything', ''], ['work', 'Working lane', 't-work'], ['explore', 'Exploring lane', 't-explore'], ['together', 'Together only', 't-together']];
+  const extra = state.day === 2 ? '<h2>In your back pocket</h2>' + RESERVE.map(r => '<details class="acc"><summary>' + r.t + '</summary><div class="in">' + r.n + '</div></details>').join('') : '';
+  const wknote = state.day === 2 ? '<div class="msg">This day assumes you are both free. If you have calls on Wednesday, move the Triana block to the afternoon.</div>' : '';
+  return '<div class="screen"><div class="sticky"><div class="seg">' + DAYS.map((d, i) => '<button data-a="day" data-v="' + i + '" aria-pressed="' + (state.day === i) + '">' + d.short + '</button>').join('') + '</div>' +
+    '<div class="chips" style="margin-top:10px">' + chips.map(c => '<button class="chip ' + c[2] + '" data-a="filter" data-v="' + c[0] + '" aria-pressed="' + (f === c[0]) + '">' + (c[2] ? '<span class="d"></span>' : '') + c[1] + '</button>').join('') + '</div></div>' +
+    '<h2 style="margin-top:8px">' + D.theme + '</h2><p class="sub" style="margin:0">' + D.line + '</p>' +
+    '<div class="dayline tnum"><span>Sunrise <b>' + SUN[0] + '</b></span><span>Sunset <b>' + SUN[1] + '</b></span><span>Highs about <b>30°C</b> (seasonal outlook)</span></div>' + wknote +
+    (list.length ? list.map(blockHtml).join('') : '<div class="empty">Nothing in this lane for the day.</div>') + extra + '</div>';
+}
+
+/* ---------- EAT ---------- */
+function viewEat() {
+  const segs = [['dishes', 'Order this'], ['places', 'Where'], ['sweet', 'Sweets and sips']];
+  let body = '';
+  if (state.eat === 'dishes') {
+    body = '<p class="sub" style="margin:14px 0 12px">Eleven plates worth ordering. Tapas usually come as a tapa (small), media ración (half) or ración (full).</p>' +
+      DISHES.map(d => '<div class="dish"><h3>' + d.n + '<small>' + d.loc + '</small></h3><p>' + d.d + '</p><div class="ask">Say: “' + d.ask + '”</div></div>').join('');
+  } else if (state.eat === 'places') {
+    body = '<p class="sub" style="margin:14px 0 12px">Hours were checked for your three days. Red means closed that day.</p>' +
+      EAT.map(e => {
+        const p = pin(e.k);
+        return '<div class="dish"><h3>' + p.n + '<small>' + e.price + ' ' + e.area + '</small></h3><p><b>Order:</b> ' + e.order + '.</p><p style="color:var(--dim)">' + e.note + '</p>' +
+          '<div class="wk">' + ['Mon', 'Tue', 'Wed'].map((d, i) => '<span class="' + (e.hrs[i] ? '' : 'no') + '">' + d + '</span>').join('') + '</div>' +
+          '<div class="hrs tnum">' + p.h + '</div><div class="acts"><a class="btn pri" target="_blank" rel="noopener" href="' + mapsUrl(p) + '">Open in Maps</a><button class="btn" data-a="showpin" data-v="' + p.k + '">Show on map</button></div></div>';
+      }).join('');
+  } else {
+    body = '<h2>Sweets</h2>' + SWEETS.map(s => '<div class="dish"><h3>' + s.n + '</h3><p>' + s.d + '</p></div>').join('') +
+      '<div class="acts" style="margin:-2px 0 6px"><button class="btn" data-a="showpin" data-v="sanleandro">Show San Leandro on map</button></div>' +
+      '<h2>Sips</h2>' + DRINKS.map(s => '<div class="dish"><h3>' + s.n + '</h3><p>' + s.d + '</p></div>').join('');
+  }
+  return '<div class="screen"><div class="sticky"><div class="seg">' + segs.map(s => '<button data-a="eat" data-v="' + s[0] + '" aria-pressed="' + (state.eat === s[0]) + '">' + s[1] + '</button>').join('') + '</div></div>' + body + '</div>';
+}
+
+/* ---------- MAP ---------- */
+let map = null, group = null, markers = {};
+const catColor = { sight: '#E4AA3C', eat: '#D6573E', culture: '#93B3F8', sweet: '#F0A6C0', base: '#86C28A' };
+function visiblePins() { return PINS.filter(p => state.mapCat === 'all' || p.c === state.mapCat); }
+function popup(p) { return '<b>' + p.n + '</b>' + p.b + (p.h ? '<br><span style="color:#B4BFDD">' + p.h + '</span>' : '') + '<br><a target="_blank" rel="noopener" href="' + mapsUrl(p) + '">Open in Google Maps</a>'; }
+function viewMap() {
+  const cats = [['all', 'All']].concat(Object.entries(CATS));
+  const list = visiblePins().filter(p => p.k !== 'airport' && p.k !== 'salvador');
+  return '<div class="screen"><div class="sticky"><div class="chips">' + cats.map(c => '<button class="chip" data-a="mapcat" data-v="' + c[0] + '" aria-pressed="' + (state.mapCat === c[0]) + '">' + c[1] + '</button>').join('') + '</div></div>' +
+    '<div id="map" role="region" aria-label="Map of places"></div>' +
+    '<div class="plist" style="margin-top:8px">' + list.map(p => '<button class="item cat-' + p.c + '" data-a="focus" data-v="' + p.k + '"><span class="sw"></span><span><b style="font-weight:600">' + p.n + '</b><small>' + p.b + '</small></span></button>').join('') + '</div></div>';
+}
+function offlineMap(pins) {
+  const pts = pins.filter(p => p.k !== 'airport'), cosl = Math.cos(37.39 * Math.PI / 180);
+  const xs = pts.map(p => p.ln * cosl), ys = pts.map(p => -p.la);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys), W = 340, H = 360, pad = 26;
+  const sc = Math.min((W - 2 * pad) / (x1 - x0 || 1), (H - 2 * pad) / (y1 - y0 || 1));
+  const g = pts.map((p, i) => { const x = pad + (xs[i] - x0) * sc, y = pad + (ys[i] - y0) * sc; return '<g class="cat-' + p.c + '"><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="5" style="fill:var(--c)"/><text x="' + (x + 7).toFixed(1) + '" y="' + (y + 3).toFixed(1) + '">' + p.n.split(/[ (,]/)[0] + ' ' + (p.n.split(/[ (,]/)[1] || '') + '</text></g>'; }).join('');
+  return '<div class="offline"><div class="sub" style="padding:2px 4px 8px">Street map unavailable offline. This is a simple layout of your places, north is up.</div><svg viewBox="0 0 ' + W + ' ' + H + '">' + g + '</svg></div>';
+}
+function initMap() {
+  const host = $('#map'); if (!host) return;
+  if (!window.L) { host.outerHTML = offlineMap(visiblePins()); return; }
+  if (map) { map.remove(); map = null; }
+  map = L.map('map', { zoomControl: false }).setView([37.3886, -5.9925], 14);
+  L.control.zoom({ position: 'topright' }).addTo(map);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, attribution: '© OpenStreetMap contributors © CARTO' }).addTo(map);
+  group = L.layerGroup().addTo(map); markers = {};
+  visiblePins().filter(p => p.k !== 'airport').forEach(p => {
+    const m = L.marker([p.la, p.ln], { icon: L.divIcon({ className: '', html: '<div class="pin cat-' + p.c + '"></div>', iconSize: [18, 18], iconAnchor: [9, 18], popupAnchor: [0, -16] }) }).bindPopup(popup(p));
+    m.addTo(group); markers[p.k] = m;
+  });
+  if (state.focus) { focusPin(state.focus, true); state.focus = null; }
+}
+function focusPin(k, fromInit) {
+  const p = pin(k); if (!p || !map) return;
+  if (!markers[k]) { state.mapCat = 'all'; state.focus = k; render(true); return; }
+  map.setView([p.la, p.ln], 16); markers[k].openPopup();
+  if (!fromInit) main.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ---------- KNOW ---------- */
+function viewKnow() {
+  return '<div class="screen"><h2 style="margin-top:calc(22px + env(safe-area-inset-top))">Know before you go</h2><p class="sub">Small local habits that make the days easier and better.</p>' +
+    '<details class="acc" open><summary>The daily rhythm</summary><div class="in">' + RHYTHM.map(r => '<div class="row"><span class="k">' + r[0] + '</span><span>' + r[1] + '</span></div>').join('') + '</div></details>' +
+    '<details class="acc"><summary>Say it in Spanish</summary><div class="in">' + PHRASES.map(r => '<div class="row"><span style="flex:1"><b>' + r[0] + '</b>' + (r[1] ? '<br><span class="sub">' + r[1] + '</span>' : '') + '</span><span class="sub" style="flex:1">' + r[2] + '</span></div>').join('') + '</div></details>' +
+    '<details class="acc"><summary>Manners and practicalities</summary><div class="in"><ul>' + ETIQUETTE.map(x => '<li>' + x + '</li>').join('') + '</ul></div></details>' +
+    '<details class="acc"><summary>Words worth knowing</summary><div class="in">' + VOCAB.map(r => '<div class="row"><span class="k" style="min-width:96px">' + r[0] + '</span><span>' + r[1] + '</span></div>').join('') + '</div></details>' +
+    '<details class="acc"><summary>Walking times from Plaza del Salvador</summary><div class="in">' + WALKS.map(r => '<div class="row"><span style="flex:1">' + r[0] + '</span><span class="k tnum" style="text-align:right">' + r[1] + '</span></div>').join('') + '<p class="sub" style="margin-top:8px">Approximate, from the plaza rather than the exact door of your flat.</p></div></details>' +
+    '<p class="sub" style="margin-top:16px">Opening hours were checked on Google Maps on 28 September 2026. Churches and small bars sometimes shift, so confirm on the day.</p></div>';
+}
+
+/* ---------- GO ---------- */
+function viewGo() {
+  const t = madridNow(), d = Math.max(0, Math.min(2, Math.floor(t / 1440)));
+  return '<div class="screen"><h2 style="margin-top:calc(22px + env(safe-area-inset-top))">Getting around</h2>' +
+    '<div class="box"><h3>Arriving on Monday</h3><p class="sub" style="margin-top:4px">The EA airport bus takes about 35 minutes and costs roughly €4–6, paid to the driver. A taxi from the rank is a fixed fare of about €25–30 and takes 25–30 minutes. Check-in at the flat opens at 15:00.</p></div>' +
+    '<div class="box"><h3>Your base</h3><p class="sub" style="margin-top:4px">Minarete del Salvador (Green Apartments), between Plaza del Salvador and Alfalfa. Almost everything on the Plan is within a 15 minute walk. For Plaza de España, Triana at night and the airport, use a taxi or a bus.</p></div>' +
+    '<div class="box gold"><h3>Message the host</h3><p class="sub" style="margin-top:4px">Asks about a Monday bag drop, early check-in and holding bags on Wednesday.</p>' +
+    '<div class="msg">' + HOST_EN + '</div><div class="acts"><button class="btn pri" data-a="copy" data-v="en">Copy in English</button><button class="btn" data-a="copy" data-v="es">Copiar en español</button></div></div>' +
+    '<div class="box"><h3>Leaving on Wednesday</h3><p class="sub" style="margin-top:4px">Leave the flat by 18:45 for a taxi to the airport, arriving about three hours before the 22:00 flight. Confirm the check-out time and bag storage with your host.</p></div>' +
+    '<h2>Preview a moment</h2><div class="box"><p class="sub" style="margin-top:0">See what the Now tab will show at any time of the trip.</p>' +
+    '<div class="acts" style="margin-top:0"><select id="pvDay" aria-label="Day">' + DAYS.map((x, i) => '<option value="' + i + '"' + (i === d ? ' selected' : '') + '>' + x.short + '</option>').join('') + '</select>' +
+    '<input type="time" id="pvTime" value="' + fmt(((t % 1440) + 1440) % 1440) + '" aria-label="Time"><button class="btn pri" data-a="preview">Preview</button><button class="btn" data-a="live">Live</button></div></div>' +
+    '<p class="sub">Times follow Madrid time (CEST) so the guide stays right even if your phone is still on UK time.</p></div>';
+}
+
+/* ---------- render + events ---------- */
+const VIEWS = { now: viewNow, plan: viewPlan, eat: viewEat, map: viewMap, know: viewKnow, go: viewGo };
+function render(keepScroll) {
+  const y = main.scrollTop;
+  main.innerHTML = VIEWS[state.tab]();
+  main.scrollTop = keepScroll ? y : 0;
+  renderNav();
+  if (state.tab === 'map') initMap();
+}
+
+const ACTIONS = {
+  tab: v => { state.tab = v; render(); },
+  gotoday: v => { state.day = +v; state.tab = 'plan'; render(); },
+  day: v => { state.day = +v; render(); },
+  filter: v => { state.filter = v; render(true); },
+  toggle: (v, el) => { state.open[v] = !state.open[v]; el.closest('.card').classList.toggle('open', state.open[v]); el.setAttribute('aria-expanded', state.open[v]); },
+  done: v => { state.done[v] = !state.done[v]; store.set('done', state.done); render(true); },
+  eat: v => { state.eat = v; render(); },
+  mapcat: v => { state.mapCat = v; render(true); },
+  focus: v => focusPin(v),
+  showpin: v => { state.tab = 'map'; state.focus = v; state.mapCat = 'all'; render(); },
+  check: v => { state.checks[v] = !state.checks[v]; store.set('checks', state.checks); render(true); },
+  copy: v => copyText(v === 'es' ? HOST_ES : HOST_EN),
+  preview: () => {
+    const d = +$('#pvDay').value, tm = $('#pvTime').value || '12:00';
+    state.preview = d * 1440 + toMin(tm); state.tab = 'now'; render();
+  },
+  live: () => { state.preview = null; render(true); }
+};
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-a]');
+  if (el && ACTIONS[el.dataset.a]) ACTIONS[el.dataset.a](el.dataset.v, el);
+});
+
+$('#enter').addEventListener('click', () => {
+  const s = $('#splash'); s.classList.add('out'); setTimeout(() => s.remove(), 550);
+});
+
+render();
+setInterval(() => { if (state.tab === 'now' && !document.hidden && state.preview == null) render(true); }, 60000);
+
+</script>
+</body>
+</html>

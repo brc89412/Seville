@@ -182,7 +182,7 @@ details.acc ul{padding-left:18px;margin:0}
 .leaflet-popup-content{margin:12px 14px;font-size:13px;line-height:1.4}
 .leaflet-popup-content b{font-family:var(--serif);font-weight:400;font-size:16px;display:block;margin-bottom:2px}
 .leaflet-popup-content a{color:var(--albero);font-weight:600}
-.cat-sight{--c:var(--albero)} .cat-eat{--c:var(--almagre)} .cat-culture{--c:var(--cobalt-soft)} .cat-sweet{--c:var(--rose)} .cat-base{--c:var(--ok)}
+.cat-sight{--c:var(--albero)} .cat-eat{--c:var(--almagre)} .cat-culture{--c:var(--cobalt-soft)} .cat-sweet{--c:var(--rose)} .cat-shop{--c:var(--cobalt)} .cat-base{--c:var(--ok)}
 .plist button.item{display:flex;width:100%;text-align:left;align-items:center;gap:12px;background:none;border:0;border-top:1px solid var(--line);padding:11px 0}
 .plist .sw{flex:none;width:12px;height:12px;border-radius:50%;background:var(--c)}
 .plist small{display:block;color:var(--dim)}
@@ -234,7 +234,7 @@ const TRACKS = {
 };
 
 const CATS = {
-  sight:'Sights', eat:'Eat and drink', culture:'Flamenco and art', sweet:'Sweets and shops', base:'Base and work'
+  sight:'Sights', eat:'Eat and drink', culture:'Flamenco and art', sweet:'Sweets', shop:'Souvenirs', base:'Base and work'
 };
 
 /* key, name, cat, lat, lng, place_id, blurb, hours */
@@ -264,6 +264,22 @@ const PINS = [
   {k:'mferia', n:'Mercado de la Feria', c:'eat', la:37.39950, ln:-5.99156, id:'ChIJ80UkAQdsEg0RSx4qcPXvaCk', b:'Local market with tapas bars. Fewer tourists than Triana.', h:'Mon–Sat, food bars busiest from 13:00'},
   {k:'sanleandro', n:'Convento de San Leandro', c:'sweet', la:37.39063, ln:-5.98839, id:'ChIJScyjpxxsEg0RvAMbxNS8d6U', b:'Convent yemas via the turning shelf. Cash.', h:'Mon–Sat 09:00–13:00 and 17:00–19:00'},
   {k:'santana', n:'Santa Ana Ceramics (Triana)', c:'sweet', la:37.38546, ln:-6.00465, id:'ChIJ3963McdtEg0RuNTIJbL37Qo', b:'Hand-painted tiles, plates and oil bottles.', h:'Mon–Sat 10:30–20:00'},
+  {k:'diza', n:'Diza Dizal Zadi (fans)', c:'shop', la:37.39057, ln:-5.99442, id:'ChIJoTQxBRBsEg0RE_AP3phsxBo', b:'Calle Sierpes 48. High-quality handmade fans, called the best in the city by several visitors.', h:'Mon–Fri 10:00–20:30, Sat 10:00–14:00, closed Sun'},
+  {k:'airearte', n:'Abanicos Airearte (fans)', c:'shop', la:37.3864233, ln:-5.9955396, id:'ChIJOaA5jABtEg0RwZJnPYsDSDo', b:'Calle García de Vinuesa 30. Handmade and hand-painted fans, warm service.', h:'Daily 10:00–22:00'},
+  {k:'lina', n:'Lina Sevilla (shawls)', c:'shop', la:37.3891686, ln:-5.9932798, id:'ChIJrdclChBsEg0RRTkbARvJnnk', b:'Calle Álvarez Quintero 11. Small, historic shop for mantones and flamenco accessories.', h:'Check locally, closed Sun'},
+  {k:'guitarreria', n:'Guitarrería Álvarez y Bernal', c:'shop', la:37.3892027, ln:-5.9992264, id:'ChIJPb2ouSVtEg0Rcg4oNaqSKiY', b:'Calle Zaragoza 4. Handmade flamenco and classical guitars, English spoken, ships worldwide.', h:'Mon–Fri 10:00–14:00, 17:00–20:00, Sat 10:30–13:30'},
+  {k:'cabezamontiel', n:'Cabeza Montiel Guitarras', c:'shop', la:37.39577, ln:-5.984, id:'ChIJzff4N7ltEg0Rf0GSDYEONBs', b:'Calle Sol 94A. Father-and-son luthiers building custom flamenco guitars, visitors can watch the workshop.', h:'Mon–Fri 11:00–14:00, 16:00–19:30'},
+  {k:'ceramicasierpes', n:'Ceramicas Sevilla 1952', c:'shop', la:37.3895325, ln:-5.9942496, id:'ChIJaV1l9I5tEg0Ri7LByTqd9PY', b:'Calle Sierpes 80. Central option for hand-painted plates and fans, good prices.', h:'Daily 10:00–20:30'},
+  {k:'ceramicagloria', n:'Ceramicas Sevilla • Tiles', c:'shop', la:37.384859, ln:-5.990172, id:'ChIJlbWDaxlsEg0RZL6CNPaF1fk', b:'Calle Gloria 5. More distinctive tiles and house-number plaques than the usual shops, well wrapped for travel.', h:'Daily 10:00–18:00'},
+  {k:'perfume', n:'Naturally, aromas of Seville', c:'shop', la:37.3895494, ln:-5.9924322, id:'ChIJLaVn2RpsEg0RB18Xc37MP2g', b:'Calle Francos 7. Small artisan perfumery, handmade orange-blossom and citrus scents.', h:'Mon–Sat 10:00–20:30, closed Sun'},
+  {k:'herbolario', n:'Herbolario Esencias de Sevilla', c:'shop', la:37.3856641, ln:-5.9900266, id:'ChIJO4wpZxlsEg0RCaDZWBoqp1Y', b:'Calle Jamerdana 1. Loose spices, saffron, teas, priced per weight.', h:'Daily 10:00–21:00'},
+  {k:'avarcas', n:'Handmade Avarcas and Espadrilles', c:'shop', la:37.389797, ln:-5.9943561, id:'ChIJdVrq2QNtEg0RMn-Jhim89o0', b:'Calle Sierpes 70. Espadrilles made in-house, pick your own colours or have a pair custom-painted.', h:'Daily 09:30–21:00'},
+  {k:'dorantes', n:'Dorantes Harness (leather)', c:'shop', la:37.38354, ln:-5.9945, id:'ChIJHw4tWKJtEg0RrPwo0wXB78w', b:'Casa de la Moneda, Calle Santander 1. Small saddlery-style workshop, handmade leather bags and belts.', h:'Mon–Fri 10:30–16:00, Sat 10:30–14:00, closed Sun'},
+  {k:'lucas', n:'Ultramarinos Lucas', c:'shop', la:37.3919977, ln:-5.9919798, id:'ChIJObdDOgVsEg0R2ap6GMnZ-Tk', b:'Calle Puente y Pellón 5. Cash-only deli for ham, cheese and preserves, cured meats sliced to order.', h:'Mon–Fri 10:00–15:00, 17:30–22:00, Sat 11:00–22:00, Sun 12:00–15:00'},
+  {k:'sierra', n:'Productos De La Sierra', c:'shop', la:37.38673, ln:-5.99775, id:'ChIJP1xaPxFsEg0RJG7nEGMvO88', b:'Calle Adriano 18, near the bullring. Cheese, ham, sherry and marmalade, staff talk you through each one.', h:'Daily 10:30–21:00 (20:00 Fri–Sat)'},
+  {k:'oleoteca', n:'La Oleoteca de Sevilla', c:'shop', la:37.386228, ln:-5.9957133, id:'ChIJDbe3zxBsEg0R8viBcfENUX4', b:'Calle García de Vinuesa 39. Olive oil tastings before you buy.', h:'Mon–Fri 10:30–20:00, Sat 10:30–14:00, closed Sun'},
+  {k:'premier', n:'Premier Sherry & Cocktail Bar', c:'shop', la:37.3902269, ln:-5.997953, id:'ChIJNxzxRBBsEg0RNys6lD0nFOM', b:'Calle San Pablo 9. Sherry bar where staff explain each style and let you taste before buying a bottle elsewhere.', h:'Daily 15:00–02:00'},
+  {k:'castanuelas', n:'Castañuelas del Sur (castanets)', c:'shop', la:37.4283569, ln:-5.9295417, id:'ChIJe3aXe-hoEg0RAzEf78j6hQc', b:'Norte district, a genuine castanet workshop, not walkable from the centre.', h:'Mon–Fri 08:00–13:30, closed weekends'},
   {k:'airport', n:'Seville airport (SVQ)', c:'base', la:37.4180, ln:-5.8931, b:'EA bus or taxi to the centre, 25 to 35 minutes.', h:''}
 ];
 const pin = k => PINS.find(p => p.k === k);
@@ -411,6 +427,22 @@ const DRINKS = [
   {n:'Café con hielo', d:'A hot espresso plus a glass of ice, poured over yourself. The local iced coffee.'}
 ];
 
+/* ---------- Souvenirs ---------- */
+const SOUVENIRS = [
+  {n:'Hand-painted fan (abanico)', price:'€15–60', d:'Wood or bone ribs with painted or lace fabric. The cheap wire-and-plastic ones on street stalls are imported; a real one has carved wood ribs and hand-applied paint or embroidery.', shops:['diza','airearte'], tip:'Ask if it is hand-painted (pintado a mano) versus printed.'},
+  {n:'Flamenco shawl (mantón de Manila)', price:'€80–400+', d:'Silk or synthetic shawl with long knotted fringe, hand-embroidered on the best pieces. Prices rise fast with embroidery density and silk quality.', shops:['lina'], tip:'A smaller embroidered piece (a shawl corner or a fan case) is a cheaper way to get real embroidery.'},
+  {n:'Castanets (castañuelas)', price:'€20–90', d:'Wooden hand percussion used in flamenco and Sevillanas dancing. Granadillo or rosewood pairs from a real workshop hold their pitch far better than souvenir-shop pairs.', shops:['castanuelas'], tip:'The proper workshop is well outside the centre by taxi (about 20 minutes). A simpler decorative pair from a flamenco boutique in town is the practical choice for a short trip.'},
+  {n:'Hand-painted ceramics and azulejo tiles', price:'€10–60', d:'Plates, bowls, oil bottles and house-number tiles in the blue-and-yellow Triana pattern. Quality varies a lot: some mass-produced pieces crack or leak.', shops:['ceramicagloria','ceramicasierpes','santana'], tip:'Tap the piece: a dull thud can mean a thin, poorly fired base. Ask for bubble wrap for the flight.'},
+  {n:'Orange blossom perfume (azahar)', price:'€25–45', d:'Seville is famous for its bitter-orange trees, and small perfumeries turn the blossom into scent. Natural ingredients mean it fades faster than a department-store perfume, which is part of the appeal.', shops:['perfume'], tip:'Go with an idea of what you like: citrus, floral or woody, since staff build the scent around your answer.'},
+  {n:'Flamenco guitar', price:'€400–2000+', d:'A real splurge rather than a casual souvenir, but Seville is one of the best places in the world to buy one. Workshops build to order and ship internationally.', shops:['guitarreria','cabezamontiel'], tip:'Worth a visit even just to see the workshop and hear the difference between models, no obligation to buy.'},
+  {n:'Espadrilles or avarcas', price:'€35–70', d:'Canvas and jute summer shoes, made in-house here rather than imported. You can pick your own colour combination or have a pair hand-painted.', shops:['avarcas'], tip:'Sizing runs local, so try a pair on rather than guessing.'},
+  {n:'Leather goods', price:'€80–250+', d:'Handbags, belts and wallets from a small saddlery-style workshop, a step up from typical tourist leather stalls.', shops:['dorantes'], tip:'Prices are fair for the quality, but this is a considered purchase, not an impulse buy.'},
+  {n:'Saffron, pimentón and loose tea', price:'€5–15', d:'Spanish saffron and smoked paprika (pimentón de la Vera) are pantry staples worth bringing home, sold loose by weight.', shops:['herbolario'], tip:'Real saffron threads are deep red with a few darker orange tips, and never cheap. Be wary of large amounts at a low price.'},
+  {n:'Orange marmalade (mermelada de naranja amarga)', price:'€4–9 a jar', d:'Made from Seville\'s bitter oranges, sharper and less sweet than regular marmalade. Sold at the same delis as the ham and cheese.', shops:['lucas','sierra'], tip:'Jars are heavy for hand luggage, so pack in checked bags or buy near the end of the trip.'},
+  {n:'Olive oil', price:'€10–25 a bottle', d:'Andalusia produces much of the world\'s olive oil. A tasting shop lets you compare varieties before choosing.', shops:['oleoteca'], tip:'Ask for a fruity, mild one if it is for someone who does not normally like strong olive oil.'},
+  {n:'Sherry (fino, manzanilla, amontillado, oloroso)', price:'€10–30 a bottle', d:'The wine of Andalusia, tied to the region the way port is to Porto. A tasting bar can help you choose a style before committing to a bottle.', shops:['premier'], tip:'Fino and manzanilla are delicate and best drunk within weeks of opening, so pick a darker oloroso or amontillado if the bottle needs to survive a long trip home.'}
+];
+
 /* ---------- Know ---------- */
 const RHYTHM = [
   ['08:00–10:00','Breakfast at the bar: tostada and café con leche.'],
@@ -524,9 +556,10 @@ const IC = {
   eat: '<path d="M7 3v8a2 2 0 0 0 2 2v8M11 3v8M7 7h4"/><path d="M17 3c-2 2-2.5 5-2.5 8h2.5v10"/>',
   map: '<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>',
   know: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 8h6"/>',
-  go: '<path d="M3 11l18-8-8 18-2-8z"/>'
+  go: '<path d="M3 11l18-8-8 18-2-8z"/>',
+  shop: '<path d="M6 8V6a6 6 0 0 1 12 0v2M4 8h16l-1.2 12.2A2 2 0 0 1 16.8 22H7.2a2 2 0 0 1-2-1.8L4 8z"/>'
 };
-const TABS = [['now', 'Now'], ['plan', 'Plan'], ['eat', 'Eat'], ['map', 'Map'], ['know', 'Know'], ['go', 'Go']];
+const TABS = [['now', 'Now'], ['plan', 'Plan'], ['eat', 'Eat'], ['shop', 'Shop'], ['map', 'Map'], ['know', 'Know'], ['go', 'Go']];
 
 function toast(msg) {
   const t = $('#toast'); t.textContent = msg; t.classList.add('on');
@@ -648,6 +681,21 @@ function viewEat() {
   return '<div class="screen"><div class="sticky"><div class="seg">' + segs.map(s => '<button data-a="eat" data-v="' + s[0] + '" aria-pressed="' + (state.eat === s[0]) + '">' + s[1] + '</button>').join('') + '</div></div>' + body + '</div>';
 }
 
+/* ---------- SHOP ---------- */
+function viewShop() {
+  const cards = SOUVENIRS.map(s => {
+    const shops = s.shops.map(k => pin(k)).filter(Boolean);
+    const shopList = shops.map(p =>
+      '<li><b>' + p.n + '.</b> ' + p.b + (p.h ? ' <span style="color:var(--dim)">(' + p.h + ')</span>' : '') +
+      '<div class="acts" style="margin-top:6px"><a class="btn pri" target="_blank" rel="noopener" href="' + mapsUrl(p) + '">Open in Maps</a><button class="btn" data-a="showpin" data-v="' + p.k + '">Show on map</button></div></li>'
+    ).join('');
+    return '<div class="dish"><h3>' + s.n + '<small>' + s.price + '</small></h3><p>' + s.d + '</p>' +
+      '<div class="ask">Tip: ' + s.tip + '</div><ul class="opts" style="margin-top:10px">' + shopList + '</ul></div>';
+  }).join('');
+  return '<div class="screen"><h2 style="margin-top:calc(22px + env(safe-area-inset-top))">Souvenirs worth buying</h2>' +
+    '<p class="sub">Traditional, locally made items, with shops chosen for craft over volume. Prices are indicative, expect some variation by size and detail.</p>' + cards + '</div>';
+}
+
 /* ---------- MAP ---------- */
 let map = null, group = null, markers = {};
 const catColor = { sight: '#E4AA3C', eat: '#D6573E', culture: '#93B3F8', sweet: '#F0A6C0', base: '#86C28A' };
@@ -716,7 +764,7 @@ function viewGo() {
 }
 
 /* ---------- render + events ---------- */
-const VIEWS = { now: viewNow, plan: viewPlan, eat: viewEat, map: viewMap, know: viewKnow, go: viewGo };
+const VIEWS = { now: viewNow, plan: viewPlan, eat: viewEat, shop: viewShop, map: viewMap, know: viewKnow, go: viewGo };
 function render(keepScroll) {
   const y = main.scrollTop;
   main.innerHTML = VIEWS[state.tab]();

@@ -517,7 +517,7 @@ const store = (() => {
 })();
 
 const state = {
-  tab: 'now', day: 0, filter: 'all', eat: 'dishes', mapCat: 'all', focus: null, preview: null,
+  tab: 'now', day: 0, filter: 'all', eat: 'dishes', mapCat: 'all', focus: null, preview: null, mapMode: 'auto',
   done: store.get('done', {}), checks: store.get('checks', {}), open: {}
 };
 
@@ -704,8 +704,12 @@ function popup(p) { return '<b>' + p.n + '</b>' + p.b + (p.h ? '<br><span style=
 function viewMap() {
   const cats = [['all', 'All']].concat(Object.entries(CATS));
   const list = visiblePins().filter(p => p.k !== 'airport' && p.k !== 'salvador');
+  const simple = state.mapMode === 'simple';
+  const mapArea = simple
+    ? offlineMap(visiblePins()) + '<div class="acts" style="margin-top:10px"><button class="btn pri" data-a="maptry">Try the live map again</button></div>'
+    : '<div id="map" role="region" aria-label="Map of places"></div><div class="acts" style="margin-top:8px"><button class="btn" data-a="mapsimple">Map not loading? Use a simple layout</button></div>';
   return '<div class="screen"><div class="sticky"><div class="chips">' + cats.map(c => '<button class="chip" data-a="mapcat" data-v="' + c[0] + '" aria-pressed="' + (state.mapCat === c[0]) + '">' + c[1] + '</button>').join('') + '</div></div>' +
-    '<div id="map" role="region" aria-label="Map of places"></div>' +
+    mapArea +
     '<div class="plist" style="margin-top:8px">' + list.map(p => '<button class="item cat-' + p.c + '" data-a="focus" data-v="' + p.k + '"><span class="sw"></span><span><b style="font-weight:600">' + p.n + '</b><small>' + p.b + '</small></span></button>').join('') + '</div></div>';
 }
 function offlineMap(pins) {
@@ -718,11 +722,20 @@ function offlineMap(pins) {
 }
 function initMap() {
   const host = $('#map'); if (!host) return;
-  if (!window.L) { host.outerHTML = offlineMap(visiblePins()); return; }
+  if (!window.L) { state.mapMode = 'simple'; render(true); return; }
   if (map) { map.remove(); map = null; }
   map = L.map('map', { zoomControl: false }).setView([37.3886, -5.9925], 14);
   L.control.zoom({ position: 'topright' }).addTo(map);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, attribution: '© OpenStreetMap contributors © CARTO' }).addTo(map);
+  const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap contributors' }).addTo(map);
+  let loaded = false, errors = 0;
+  tiles.on('tileload', () => { loaded = true; });
+  tiles.on('tileerror', () => { errors++; });
+  setTimeout(() => {
+    if (!loaded && errors > 0 && state.tab === 'map' && state.mapMode === 'auto') {
+      state.mapMode = 'simple'; render(true);
+      toast('Map tiles blocked on this network — showing a simple layout');
+    }
+  }, 4500);
   group = L.layerGroup().addTo(map); markers = {};
   visiblePins().filter(p => p.k !== 'airport').forEach(p => {
     const m = L.marker([p.la, p.ln], { icon: L.divIcon({ className: '', html: '<div class="pin cat-' + p.c + '"></div>', iconSize: [18, 18], iconAnchor: [9, 18], popupAnchor: [0, -16] }) }).bindPopup(popup(p));
@@ -731,7 +744,9 @@ function initMap() {
   if (state.focus) { focusPin(state.focus, true); state.focus = null; }
 }
 function focusPin(k, fromInit) {
-  const p = pin(k); if (!p || !map) return;
+  const p = pin(k); if (!p) return;
+  if (state.mapMode === 'simple') { toast(p.n); return; }
+  if (!map) return;
   if (!markers[k]) { state.mapCat = 'all'; state.focus = k; render(true); return; }
   map.setView([p.la, p.ln], 16); markers[k].openPopup();
   if (!fromInit) main.scrollTo({ top: 0, behavior: 'smooth' });
@@ -770,7 +785,7 @@ function render(keepScroll) {
   main.innerHTML = VIEWS[state.tab]();
   main.scrollTop = keepScroll ? y : 0;
   renderNav();
-  if (state.tab === 'map') initMap();
+  if (state.tab === 'map' && state.mapMode === 'auto') initMap();
 }
 
 const ACTIONS = {
@@ -784,6 +799,8 @@ const ACTIONS = {
   mapcat: v => { state.mapCat = v; render(true); },
   focus: v => focusPin(v),
   showpin: v => { state.tab = 'map'; state.focus = v; state.mapCat = 'all'; render(); },
+  mapsimple: () => { state.mapMode = 'simple'; render(true); },
+  maptry: () => { state.mapMode = 'auto'; render(true); },
   check: v => { state.checks[v] = !state.checks[v]; store.set('checks', state.checks); render(true); },
   copy: v => copyText(v === 'es' ? HOST_ES : HOST_EN),
   preview: () => {
